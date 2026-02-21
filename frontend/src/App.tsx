@@ -2,6 +2,7 @@ import { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import FlightList from "./components/FlightList";
 import type { Flight } from "./types";
+import { estimateDelays } from "./api";
 
 function App() {
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -16,19 +17,13 @@ function App() {
   };
 
   const handleEstimateDelays = async () => {
-    console.log("Sending to backend:", { flights });
-
-    const mockBackendResponse = {
-      flights: flights.map((flight) => ({
-        ...flight,
-        estimatedDelay: Math.floor(Math.random() * 121),
-      })),
-    };
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    console.log("Received from backend:", mockBackendResponse);
-    setFlights(mockBackendResponse.flights);
+    setError("");
+    try {
+      const results = await estimateDelays(flights);
+      setFlights(results);
+    } catch (err: any) {
+      setError(err.message || "Error estimating delays");
+    }
   };
 
   return (
