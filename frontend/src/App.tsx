@@ -25,7 +25,6 @@ function App() {
       })),
     };
 
-    // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     console.log("Received from backend:", mockBackendResponse);

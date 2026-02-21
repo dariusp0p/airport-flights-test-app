@@ -27,26 +27,48 @@ const FileUpload = ({ onFileProcessed, onError }: FileUploadProps) => {
         }
         const data = JSON.parse(text);
 
-        // Basic validation for the JSON structure
         if (!data.flights || !Array.isArray(data.flights)) {
           throw new Error("Invalid JSON structure: 'flights' array not found.");
         }
 
-        // You could add more detailed validation for each flight object here
+        for (const flight of data.flights) {
+          const requiredStringProps = [
+            "flightNumber",
+            "airline",
+            "from",
+            "to",
+            "scheduledArrival",
+          ];
+
+          for (const prop of requiredStringProps) {
+            if (typeof (flight as any)[prop] !== "string") {
+              throw new Error(
+                `Invalid or missing property '${prop}' in a flight object. Expected a string.`,
+              );
+            }
+          }
+
+          if (isNaN(new Date(flight.scheduledArrival).getTime())) {
+            throw new Error(
+              `Invalid date format for scheduledArrival in flight ${flight.flightNumber}.`,
+            );
+          }
+        }
+
         const flightsWithInitialDelay = data.flights.map((flight: any) => ({
           ...flight,
           estimatedDelay: null,
         }));
 
         onFileProcessed(flightsWithInitialDelay);
-        onError(""); // Clear previous errors
+        onError("");
       } catch (error) {
         if (error instanceof Error) {
           onError(`Error processing file: ${error.message}`);
         } else {
           onError("An unknown error occurred while processing the file.");
         }
-        onFileProcessed([]); // Clear any existing flight data
+        onFileProcessed([]);
       }
     };
     reader.readAsText(file);
