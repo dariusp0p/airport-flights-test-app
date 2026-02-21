@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">
+  <g transform="rotate(45 32 32)">
+    
+    <path d="M32 10 C 35 10, 38 15, 38 25 L 56 38 L 56 42 L 38 35 L 38 48 L 46 54 L 46 58 L 32 54 L 18 58 L 18 54 L 26 48 L 26 35 L 8 42 L 8 38 L 26 25 C 26 15, 29 10, 32 10 Z" fill="#b0bec5" transform="translate(2, 2)" />
+    
+    <path d="M32 10 C 35 10, 38 15, 38 25 L 56 38 L 56 42 L 38 35 L 38 48 L 46 54 L 46 58 L 32 54 L 18 58 L 18 54 L 26 48 L 26 35 L 8 42 L 8 38 L 26 25 C 26 15, 29 10, 32 10 Z" fill="#90caf9" />
+    
+    <path d="M38 25 L 56 38 L 56 42 L 38 35 Z" fill="#42a5f5" />
+    
+    <path d="M26 25 L 8 38 L 8 42 L 26 35 Z" fill="#42a5f5" />
+    
+    <path d="M38 48 L 46 54 L 46 58 L 32 54 Z" fill="#42a5f5" />
+    
+    <path d="M26 48 L 18 54 L 18 58 L 32 54 Z" fill="#42a5f5" />
+    
+    <path d="M32 13 C 33.5 13, 35 15, 35 18 C 35 19, 29 19, 29 18 C 29 15, 30.5 13, 32 13 Z" fill="#ffffff" opacity="0.9"/>
+    
+  </g>
+</svg>
