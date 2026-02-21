@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import FileUpload from "./components/FileUpload";
+import FlightList from "./components/FlightList";
+import type { Flight } from "./types";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [error, setError] = useState<string>("");
+
+  const handleFileProcessed = (processedFlights: Flight[]) => {
+    setFlights(processedFlights);
+  };
+
+  const handleError = (message: string) => {
+    setError(message);
+  };
+
+  const handleEstimateDelays = async () => {
+    console.log("Sending to backend:", { flights });
+
+    const mockBackendResponse = {
+      flights: flights.map((flight) => ({
+        ...flight,
+        estimatedDelay: Math.floor(Math.random() * 121),
+      })),
+    };
+
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    console.log("Received from backend:", mockBackendResponse);
+    setFlights(mockBackendResponse.flights);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main className="container">
+      <div className="container-fluid py-5">
+        <h1 className="display-5 fw-bold text-white">Flight Delay Estimator</h1>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+
+      <div className="card shadow-sm mb-4">
+        <div className="card-body">
+          <h5 className="card-title">Upload Flights</h5>
+          <FileUpload
+            onFileProcessed={handleFileProcessed}
+            onError={handleError}
+          />
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      <FlightList flights={flights} onEstimate={handleEstimateDelays} />
+    </main>
+  );
 }
 
-export default App
+export default App;
