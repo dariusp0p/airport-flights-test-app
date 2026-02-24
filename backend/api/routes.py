@@ -10,7 +10,25 @@ from typing import Any, Dict, Optional, List
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
+# bring in the ML code from bala.py at module level (backend is on pythonpath
+# when uvicorn is run from that directory)
+import bala
+from bala import FlightDelayModel, load_flights_data, process_frontend_payload
+
+
 router = APIRouter()
+
+# train the model once when the module is imported; if training fails we
+# record None and later endpoints will error appropriately.
+try:
+    _historical_df = load_flights_data()
+    _model: FlightDelayModel | None = FlightDelayModel()
+    _model.train(_historical_df)
+    print("[routes] flight delay model trained on import")
+except Exception as exc:
+    _model = None
+    print(f"[routes] error training model: {exc}")
+
 
 
 @dataclass
@@ -97,10 +115,15 @@ def _process_job(job_id: str, flights: List[Dict[str, Any]]) -> None:
                 raise ValueError("Flights payload must be a list")
 
             _update_job(job_id, stage="fetching_weather", progress=25)
-            weather = _mock_fetch_weather_for_flights(flights)
+            # our real pipeline will fetch weather internally as part of
+            # `process_frontend_payload`; we just need to hand it the raw
+            # flight list and a trained model.
 
             _update_job(job_id, stage="predicting", progress=70)
-            predicted = _mock_predict_delays(flights, weather)
+            if _model is None:
+                raise RuntimeError("Model not available")
+
+            predicted = process_frontend_payload({"flights": flights}, _model)
 
             _update_job(
                 job_id,
